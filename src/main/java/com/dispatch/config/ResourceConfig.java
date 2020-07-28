@@ -1,5 +1,8 @@
 package com.dispatch.config;
 
+import com.dispatch.security.CustomAccessDeniedHandler;
+import com.dispatch.security.CustomAuthExceptionEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,9 +22,16 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 @EnableResourceServer
 public class ResourceConfig extends ResourceServerConfigurerAdapter {
 
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Autowired
+    private CustomAuthExceptionEntryPoint customAuthExceptionEntryPoint;
+
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId("dispatch");
+        resources.resourceId("dispatch").accessDeniedHandler(customAccessDeniedHandler)
+                .authenticationEntryPoint(customAuthExceptionEntryPoint);
     }
 
     @Override
